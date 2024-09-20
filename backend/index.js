@@ -3,7 +3,8 @@ const cors = require("cors");
 const app = express();
 const port = 8081;
 const { Worker } = require("worker_threads");
-var conversion = require("phantom-html-to-pdf")();
+// var conversion = require("phantom-html-to-pdf")();
+const html_to_pdf = require("html-pdf-node");
 // const { generatePdf } = require("./public/worker");
 
 app.use(express.static("public"));
@@ -25,28 +26,53 @@ app.get("/test", (req, res) => {
 app.get("/check", async (req, res) => {
   try {
     // const pdfBuffer = await generatePdf();
-    const pdfStream = await new Promise((resolve) => {
-      conversion({ html: "<h1>Hello World</h1>" }, function (err, pdf) {
-        if (err) {
-          console.error("Error generating PDF:", err);
-          resolve(null);
-        } else {
-          resolve(pdf);
-        }
+    //
+    // const pdfStream = await new Promise((resolve) => {
+    //   conversion({ html: "<h1>Hello World</h1>" }, function (err, pdf) {
+    //     if (err) {
+    //       console.error("Error generating PDF:", err);
+    //       resolve(null);
+    //     } else {
+    //       resolve(pdf);
+    //     }
+    //   });
+    // });
+
+    // // console.log(pdfBuffer)
+    // res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader("Content-Disposition", "inline; filename=example.pdf");
+    // pdfStream.stream.pipe(res);
+    //
+
+    let options = { format: "A4" };
+    let file = {
+      content: `
+      <html>
+        <body>
+          <div>Welcome to html-pdf-node</div>
+          <h6>Test</h6>
+          <a href="https://www.google.com">Google</a>
+        </body>
+      </html>
+    `,
+    };
+
+    const pdfBuffer = await new Promise((resolve) => {
+      html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+        // console.log("PDF Buffer:-", pdfBuffer);
+        resolve(pdfBuffer);
       });
     });
 
-    // console.log(pdfBuffer)
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "inline; filename=example.pdf");
-    pdfStream.stream.pipe(res);
+    //
 
-    // res.writeHead(200, {
-    //   "Content-Type": "application/pdf",
-    //   "Content-Disposition": "attachment; filename=test.pdf",
-    //   "Content-Length": pdfBuffer.length,
-    // });
-    // res.end(pdfBuffer);
+    res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "inline; filename=test.pdf",
+      // "Content-Disposition": "attachment; filename=test.pdf",
+      "Content-Length": pdfBuffer.length,
+    });
+    res.end(pdfBuffer);
 
     // fs.writeFile(filePath, pdfBuffer, (err) => {
     //   if (err) {
