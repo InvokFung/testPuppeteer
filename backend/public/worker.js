@@ -1,12 +1,14 @@
 const { parentPort } = require("worker_threads");
-const puppeteer = require("puppeteer");
-// const chromium = require("chrome-aws-lambda")
+// const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
+// const { executablePath } = require("@sparticuz/chromium-min");
 // const chromium = require("@sparticuz/chromium-min");
 
 async function generatePdf() {
-  const browser = await puppeteer.launch({
+  const browser = await chromium.puppeteer.launch({
     headless: "new",
     ignoreHTTPSErrors: true,
+    executablePath: await chromium.executablePath,
     // executablePath: await chromium.executablePath(
     //   `https://github.com/Sparticuz/chromium/releases/download/v116.0.0/chromium-v116.0.0-pack.tar`
     // ),
