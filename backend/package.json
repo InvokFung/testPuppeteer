@@ -16,7 +16,10 @@
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "html-pdf-node": "^1.0.8",
+    "html-to-pdfmake": "^2.5.13",
+    "jsdom": "^25.0.0",
     "path": "^0.12.7",
+    "pdfmake": "^0.2.12",
     "phantom-html-to-pdf": "^0.8.3",
     "wkhtmltopdf": "^0.4.0"
   }

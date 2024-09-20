@@ -4,8 +4,16 @@ const app = express();
 const port = 8081;
 const { Worker } = require("worker_threads");
 // var conversion = require("phantom-html-to-pdf")();
-const html_to_pdf = require("html-pdf-node");
+// const html_to_pdf = require("html-pdf-node");
 // const { generatePdf } = require("./public/worker");
+var pdfMake = require("pdfmake/build/pdfmake");
+var pdfFonts = require("pdfmake/build/vfs_fonts");
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+var fs = require("fs");
+var jsdom = require("jsdom");
+var { JSDOM } = jsdom;
+var { window } = new JSDOM("");
+var htmlToPdfMake = require("html-to-pdfmake");
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -23,47 +31,63 @@ app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
 
+const conversion = async () => {
+  // const pdfStream = await new Promise((resolve) => {
+  //   conversion({ html: "<h1>Hello World</h1>" }, function (err, pdf) {
+  //     if (err) {
+  //       console.error("Error generating PDF:", err);
+  //       resolve(null);
+  //     } else {
+  //       resolve(pdf);
+  //     }
+  //   });
+  // });
+  // // console.log(pdfBuffer)
+  // res.setHeader("Content-Type", "application/pdf");
+  // res.setHeader("Content-Disposition", "inline; filename=example.pdf");
+  // pdfStream.stream.pipe(res);
+  //
+};
+
+// const html_to_pdfFunc = async () => {
+//   let options = { format: "A4" };
+//   let file = {
+//     content: `
+//     <html>
+//       <body>
+//         <div>Welcome to html-pdf-node</div>
+//         <h6>Test</h6>
+//         <a href="https://www.google.com">Google</a>
+//       </body>
+//     </html>
+//   `,
+//   };
+
+//   const pdfBuffer = await new Promise((resolve) => {
+//     html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+//       // console.log("PDF Buffer:-", pdfBuffer);
+//       resolve(pdfBuffer);
+//     });
+//   });
+//   // Need chromium
+// };
+
 app.get("/check", async (req, res) => {
   try {
     // const pdfBuffer = await generatePdf();
     //
-    // const pdfStream = await new Promise((resolve) => {
-    //   conversion({ html: "<h1>Hello World</h1>" }, function (err, pdf) {
-    //     if (err) {
-    //       console.error("Error generating PDF:", err);
-    //       resolve(null);
-    //     } else {
-    //       resolve(pdf);
-    //     }
-    //   });
-    // });
+    var html = htmlToPdfMake(`<div>the html code</div>`, { window: window });
 
-    // // console.log(pdfBuffer)
-    // res.setHeader("Content-Type", "application/pdf");
-    // res.setHeader("Content-Disposition", "inline; filename=example.pdf");
-    // pdfStream.stream.pipe(res);
-    //
-
-    let options = { format: "A4" };
-    let file = {
-      content: `
-      <html>
-        <body>
-          <div>Welcome to html-pdf-node</div>
-          <h6>Test</h6>
-          <a href="https://www.google.com">Google</a>
-        </body>
-      </html>
-    `,
+    var docDefinition = {
+      content: [html],
     };
 
+    var pdfDocGenerator = pdfMake.createPdf(docDefinition);
     const pdfBuffer = await new Promise((resolve) => {
-      html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-        // console.log("PDF Buffer:-", pdfBuffer);
-        resolve(pdfBuffer);
+      pdfDocGenerator.getBuffer(function (buffer) {
+        resolve(buffer);
       });
     });
-
     //
 
     res.writeHead(200, {
