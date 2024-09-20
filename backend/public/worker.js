@@ -5,7 +5,9 @@ const chromium = require("chrome-aws-lambda");
 async function generatePdf() {
   const browser = await chromium.puppeteer.launch({
     headless: "new",
+    defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
+    ignoreHTTPSErrors: true,
     args: [
       ...chromium.args,
       "--disable-features=IsolateOrigins",
