@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 8000;
+const port = 8080;
 const { Worker } = require("worker_threads");
 
 app.use(express.static("public"));
@@ -31,8 +31,8 @@ app.post("/calculate", (req, res) => {
   worker.postMessage(number);
 });
 
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
-module.exports = app;
+// module.exports = app;
