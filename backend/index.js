@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const port = 8081;
 const { Worker } = require("worker_threads");
+var conversion = require("phantom-html-to-pdf")();
 // const { generatePdf } = require("./public/worker");
 
 app.use(express.static("public"));
@@ -23,14 +24,30 @@ app.get("/test", (req, res) => {
 
 app.get("/check", async (req, res) => {
   try {
-    const pdfBuffer = await generatePdf();
-
-    res.writeHead(200, {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": "attachment; filename=test.pdf",
-      "Content-Length": pdfBuffer.length,
+    // const pdfBuffer = await generatePdf();
+    const pdfStream = await new Promise((resolve) => {
+      conversion({ html: "<h1>Hello World</h1>" }, function (err, pdf) {
+        if (err) {
+          console.error("Error generating PDF:", err);
+          resolve(null);
+        } else {
+          resolve(pdf);
+        }
+      });
     });
-    res.end(pdfBuffer);
+
+    // console.log(pdfBuffer)
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "inline; filename=example.pdf");
+    pdfStream.stream.pipe(res);
+
+    // res.writeHead(200, {
+    //   "Content-Type": "application/pdf",
+    //   "Content-Disposition": "attachment; filename=test.pdf",
+    //   "Content-Length": pdfBuffer.length,
+    // });
+    // res.end(pdfBuffer);
+
     // fs.writeFile(filePath, pdfBuffer, (err) => {
     //   if (err) {
     //     console.error("Error writing PDF to file:", err);
