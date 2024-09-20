@@ -1,10 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = 8000;
 const { Worker } = require("worker_threads");
 
 app.use(express.static("public"));
 app.use(express.json());
+app.use(cors());
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
@@ -25,6 +31,8 @@ app.post("/calculate", (req, res) => {
   worker.postMessage(number);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
+
+module.exports = app;
