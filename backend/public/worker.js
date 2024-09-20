@@ -1,13 +1,16 @@
-// const { parentPort } = require("worker_threads");
-// const puppeteer = require("puppeteer");
-const chromium = require("chrome-aws-lambda");
+const { parentPort } = require("worker_threads");
+const puppeteer = require("puppeteer");
+// const chromium = require("chrome-aws-lambda")
+// const chromium = require("@sparticuz/chromium-min");
 
 async function generatePdf() {
-  const browser = await chromium.puppeteer.launch({
+  const browser = await puppeteer.launch({
     headless: "new",
     ignoreHTTPSErrors: true,
+    // executablePath: await chromium.executablePath(
+    //   `https://github.com/Sparticuz/chromium/releases/download/v116.0.0/chromium-v116.0.0-pack.tar`
+    // ),
     args: [
-      ...chromium.args,
       "--disable-features=IsolateOrigins",
       "--disable-site-isolation-trials",
       "--autoplay-policy=user-gesture-required",
@@ -83,16 +86,14 @@ async function generatePdf() {
   return pdfBuffer;
 }
 
-// parentPort.on("message", async (msg) => {
-//   let result = 2 * msg;
-//   try {
-//     const pdfBuffer = await generatePdf();
-//     // console.log(pdfBuffer);
-//     parentPort.postMessage(pdfBuffer);
-//   } catch (e) {
-//     console.log(e);
-//     parentPort.postMessage(null);
-//   }
-// });
-
-module.exports = { generatePdf };
+parentPort.on("message", async (msg) => {
+  let result = 2 * msg;
+  try {
+    const pdfBuffer = await generatePdf();
+    // console.log(pdfBuffer);
+    parentPort.postMessage(pdfBuffer);
+  } catch (e) {
+    console.log(e);
+    parentPort.postMessage(null);
+  }
+});

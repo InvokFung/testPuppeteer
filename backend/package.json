@@ -10,7 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "chrome-aws-lambda": "^10.1.0",
+    "@sparticuz/chromium": "^127.0.0",
+    "@sparticuz/chromium-min": "^127.0.0",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "path": "^0.12.7",
