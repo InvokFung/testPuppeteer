@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 8080;
+const port = 8081;
 const { Worker } = require("worker_threads");
 
 app.use(express.static("public"));
@@ -12,13 +12,13 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/test", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
+app.get('/abc', (req, res) => {
+  res.send('Hello World ABC');
 });
 
 app.post("/calculate", (req, res) => {
   const { number } = req.body;
-  const worker = new Worker("./worker.js");
+  const worker = new Worker(__dirname + "/public/worker.js");
   worker.on("message", (result) => {
     res.json({ result });
   });
