@@ -12,8 +12,12 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get('/abc', (req, res) => {
-  res.send('Hello World ABC');
+app.get("/abc", (req, res) => {
+  res.send("Hello World ABC");
+});
+
+app.get("/test", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.post("/calculate", (req, res) => {
