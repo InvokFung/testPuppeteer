@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Worker Example</title>
-</head>
-<body>
-  <form id="calcForm">
-    <label for="number">Enter a number:</label>
-    <input type="number" id="number" name="number" required>
-    <button type="submit">Submit</button>
-  </form>
-  <div id="result"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Worker Example</title>
+  </head>
+  <body>
+    <form id="calcForm">
+      <label for="number">Enter a number:</label>
+      <input type="number" id="number" name="number" required />
+      <button type="submit">Submit</button>
+    </form>
+    <div id="result"></div>
 
-  <script>
-    document.getElementById('calcForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const number = document.getElementById('number').value;
-      fetch('/calculate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ number: parseInt(number) })
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('result').innerText = 'Result is: ' + data.result;
-      })
-      .catch(error => console.error('Error:', error));
-    });
-  </script>
-</body>
+    <script>
+      document
+        .getElementById("calcForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const number = document.getElementById("number").value;
+          const res = await fetch("/calculate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ number: parseInt(number) }),
+          });
+          const blob = await res.blob();
+        
+          const url = window.URL.createObjectURL(blob);
+          // const link = document.createElement('a');
+          // link.href = url;
+          // link.setAttribute('download', 'yourcoolpdf.pdf');
+          // document.body.appendChild(link);
+          // link.click();
+
+          const iframe = document.createElement("iframe");
+          iframe.src = url;
+          iframe.width = "100%";
+          iframe.height = "600px";
+          document.getElementById("result").innerHTML = "";
+          document.getElementById("result").appendChild(iframe);
+        });
+    </script>
+  </body>
 </html>
