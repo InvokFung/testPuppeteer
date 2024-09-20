@@ -1,8 +1,9 @@
 // const { parentPort } = require("worker_threads");
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 
 async function generatePdf() {
-  const browser = await puppeteer.launch({
+  const browser = await chromium.puppeteer.launch({
     headless: "new",
     args: [
       "--disable-features=IsolateOrigins",
